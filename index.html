@@ -134,7 +134,7 @@ button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
         ⭐⭐⭐ הגעת לפני האויב ואספת את מספר המטבעות שכתוב למעלה (למשל 12/30)
       </div>
       <div class="box">
-        <b>התנגשות לא עושה לך כלום!</b> המכונית השנייה עפה הצידה ואתה ממשיך לנסוע.
+        <b>כל התנגשות עולה 5 מטבעות!</b> המכונית השנייה עפה הצידה ואתה ממשיך לנסוע. עם מגן, בקפיצה מרמפה או בטיסה לא מאבדים כלום.
         יש 100 שלבים. בכל שלב האויב מתחזק ומתחיל קצת יותר רחוק לפניך, אבל הוא אף פעם לא מהיר ממך.
         ברק עוזר לתפוס אותו.
       </div>
@@ -359,7 +359,7 @@ function makeState(l, demo) {
     l, c, demo, objs: g.objs, spawns: g.spawns, spawnIdx: 0,
     target: Math.max(5, Math.round(g.coins * .5 / 5) * 5),
     pmax, car, flying: car.style === 'plane',
-    dist: 0, speed: 140, coins: 0, money: 0, hearts: 5, crashes: 0, smashed: 0,
+    dist: 0, speed: 140, coins: 0, money: 0, lost: 0, hearts: 5, crashes: 0, smashed: 0,
     shield: 0, magnet: 0, boost: 0,
     cars: [], parts: [], texts: [], decor: Array.from({ length: 16 }, () => mkDecor(rnd(-40, H + 20))),
     shake: 0, pDone: false, beatRival: false, winT: -1, failT: -1,
@@ -406,9 +406,11 @@ function hurt(o, isCar) {
     say('פאוו! +' + bonus, ox, oy - 20, '#4cc9f0', 28); sfx.smash(); S.shake = 6;
     return;
   }
-  // a crash does nothing to you: the other car flies away and you keep driving
+  // a crash costs 5 coins (dad's rule); the other car flies away and you keep driving
   knock(o, isCar);
   S.crashes++; p.kick = 1;
+  S.money -= 5; S.lost += 5;
+  say('⁦-5⁩', p.x + 40, pY - 20, '#ff4d6d', 30);
   burst((ox + p.x) / 2, (oy + pY) / 2, 22, ['#ffc83d', '#ff8c42', '#ffffff', '#ff3b5c'], 240);
   say(o.t === 'spike' ? 'פנצ\'ר!' : pick(['בום!', 'אופס!', 'טראח!', 'בננג!']), p.x, pY - 55, '#ffc83d', 36);
   sfx.crash(); S.shake = 7;
@@ -839,7 +841,7 @@ function endLevel() {
   mode = 'end'; playing(false);
   const gotTarget = S.coins >= S.target;
   const stars = 1 + (S.beatRival ? 1 : 0) + (S.beatRival && gotTarget ? 1 : 0);
-  save.money += S.money;
+  save.money = Math.max(0, save.money + S.money);
   save.stars[S.l] = Math.max(save.stars[S.l] || 0, stars);
   save.unlocked = Math.max(save.unlocked, Math.min(LEVELS, S.l + 1));
   persist();
@@ -851,7 +853,7 @@ function endLevel() {
   const ck = (ok, s) => `<div><span class="${ok ? 'ok' : 'no'}">${ok ? '✔' : '✖'}</span>${s}</div>`;
   $('endChecks').innerHTML = ck(true, 'הגעת לקו הסיום') + ck(S.beatRival, S.beatRival ? 'ניצחת את האויב' : 'האויב הגיע לפניך') +
     ck(gotTarget, `אספת ${S.coins} מתוך ${S.target} מטבעות`);
-  $('endMoney').textContent = `קיבלת ${S.money} מטבעות. יש לך עכשיו ${save.money}`;
+  $('endMoney').textContent = (S.lost ? `הרווחת ${S.money + S.lost}, איבדת ${S.lost} בהתנגשויות (${S.crashes}). ` : `קיבלת ${S.money} מטבעות. `) + `יש לך עכשיו ${save.money}`;
   const n = $('endNotice'); n.style.background = ''; moneyNotice(n);
   $('nextBtn').hidden = last;
   show('endS');
@@ -941,7 +943,7 @@ setSoundIcon();
 (function legend() {
   const rows = [['coin', '<b>מטבע</b> - כסף לקניית מכוניות'], ['shield', '<b>מגן</b> (8 שניות) - מעיף מכוניות ומכשולים, בלי לאבד לב'],
     ['magnet', '<b>מגנט</b> (9 שניות) - מושך אליך מטבעות'], ['bolt', '<b>ברק</b> - גז! נוסעים הכי מהר'],
-    ['ramp', '<b>רמפה</b> - קופצים מעל מכוניות וקוצים'], ['spike', '<b>קוצים, קונוסים וחביות</b> - בום! וממשיכים']];
+    ['ramp', '<b>רמפה</b> - קופצים מעל מכוניות וקוצים'], ['spike', '<b>קוצים, קונוסים וחביות</b> - בום! מינוס 5 מטבעות']];
   $('legend').innerHTML = rows.map((r, i) => `<canvas id="lg${i}" width="60" height="60"></canvas><span>${r[1]}</span>`).join('');
   rows.forEach((r, i) => {
     const g = $('lg' + i).getContext('2d'); g.setTransform(2, 0, 0, 2, 0, 0);
