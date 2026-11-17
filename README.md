@@ -8,9 +8,9 @@ A kids' top-down car game, designed together with Rani's son. One HTML file, no 
 - Phone, no internet at all: copy `index.html` to the phone and open it in the browser.
 
 ## The game
-- 21 levels. Reach the finish line. Stars: 1 = finished, 2 = also beat the enemy car, 3 = also collected the coin target.
-- 5 hearts. Every crash costs a heart and you bounce back to your lane. 0 hearts = try the level again.
-- Coins are kept between rounds and buy faster cars in the garage (8 cars).
+- 100 levels. Reach the finish line. Stars: 1 = finished, 2 = also beat the enemy car, 3 = also collected the coin target. The enemy gets stronger and starts further ahead each level, but is never faster than you.
+- Crashes do nothing to you: the other car flies away and you keep driving.
+- Coins are kept between rounds (worth more in later levels) and buy cars in the garage: 100 cars in 10 families, 120 to 700 km/h. The last one, "טיסה 700", is a plane that flies over everything.
 - Power-ups: shield (8s, smash cars), magnet (9s, pulls coins), lightning (gas boost). Ramps jump over cars and spikes.
 - Mini-map on the left: white ring = you, purple = the enemy.
 
