@@ -1,0 +1,15 @@
+{
+  "name": "מרוץ בום",
+  "short_name": "מרוץ בום",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#17202c",
+  "theme_color": "#17202c",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
