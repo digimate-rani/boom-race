@@ -134,7 +134,7 @@ button:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
         ⭐⭐⭐ הגעת לפני האויב ואספת את מספר המטבעות שכתוב למעלה (למשל 12/30)
       </div>
       <div class="box">
-        <b>כל התנגשות עולה 5 מטבעות!</b> המכונית השנייה עפה הצידה ואתה ממשיך לנסוע. עם מגן, בקפיצה מרמפה או בטיסה לא מאבדים כלום.
+        <b>כל התנגשות עולה 5 מטבעות!</b> בשלבים שבהם מטבע שווה יותר, גם הקנס גדל (למשל מטבע ששווה 3 = קנס של 15). המכונית השנייה עפה הצידה ואתה ממשיך לנסוע. עם מגן, בקפיצה מרמפה או בטיסה לא מאבדים כלום.
         יש 100 שלבים. בכל שלב האויב מתחזק ומתחיל קצת יותר רחוק לפניך, אבל הוא אף פעם לא מהיר ממך.
         ברק עוזר לתפוס אותו.
       </div>
@@ -409,8 +409,9 @@ function hurt(o, isCar) {
   // a crash costs 5 coins (dad's rule); the other car flies away and you keep driving
   knock(o, isCar);
   S.crashes++; p.kick = 1;
-  S.money -= 5; S.lost += 5;
-  say('⁦-5⁩', p.x + 40, pY - 20, '#ff4d6d', 30);
+  const fine = 5 * S.c.coinValue;   // the fine grows with the coin value
+  S.money -= fine; S.lost += fine;
+  say('⁦-' + fine + '⁩', p.x + 40, pY - 20, '#ff4d6d', 30);
   burst((ox + p.x) / 2, (oy + pY) / 2, 22, ['#ffc83d', '#ff8c42', '#ffffff', '#ff3b5c'], 240);
   say(o.t === 'spike' ? 'פנצ\'ר!' : pick(['בום!', 'אופס!', 'טראח!', 'בננג!']), p.x, pY - 55, '#ffc83d', 36);
   sfx.crash(); S.shake = 7;
@@ -943,7 +944,7 @@ setSoundIcon();
 (function legend() {
   const rows = [['coin', '<b>מטבע</b> - כסף לקניית מכוניות'], ['shield', '<b>מגן</b> (8 שניות) - מעיף מכוניות ומכשולים, בלי לאבד לב'],
     ['magnet', '<b>מגנט</b> (9 שניות) - מושך אליך מטבעות'], ['bolt', '<b>ברק</b> - גז! נוסעים הכי מהר'],
-    ['ramp', '<b>רמפה</b> - קופצים מעל מכוניות וקוצים'], ['spike', '<b>קוצים, קונוסים וחביות</b> - בום! מינוס 5 מטבעות']];
+    ['ramp', '<b>רמפה</b> - קופצים מעל מכוניות וקוצים'], ['spike', '<b>קוצים, קונוסים וחביות</b> - בום! קנס במטבעות']];
   $('legend').innerHTML = rows.map((r, i) => `<canvas id="lg${i}" width="60" height="60"></canvas><span>${r[1]}</span>`).join('');
   rows.forEach((r, i) => {
     const g = $('lg' + i).getContext('2d'); g.setTransform(2, 0, 0, 2, 0, 0);
